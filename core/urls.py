@@ -14,11 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from contest.views.standard_views import CommonIndexView, PanelIndexView
+from django.urls import path, include
+from contest.views.standard_views import CommonIndexView, PanelIndexView, AuthorIndexView, AuthorCreateView, \
+    AuthorDeleteView, AuthorUpdateView
+
+author_patterns = ([
+    path('', AuthorIndexView.as_view(), name="index"),
+    path('create/', AuthorCreateView.as_view(), name="create"),
+    path('<int:id>/delete/', AuthorDeleteView.as_view(), name="delete"),
+    path('<int:id>/edit/', AuthorUpdateView.as_view(), name="edit"),
+    ], 'authors')
+
+panel_patterns = ([
+    path('', PanelIndexView.as_view(), name='index'),
+    path('authors/', include(author_patterns))],
+    'panel')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', CommonIndexView.as_view(), name='common-index'),
-    path('panel/', PanelIndexView.as_view(), name='panel-index'),
+    path('panel/', include(panel_patterns)),
 ]
