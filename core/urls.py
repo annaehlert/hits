@@ -15,8 +15,28 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from contest.views.standard_views import CommonIndexView, PanelIndexView, AuthorIndexView, AuthorCreateView, \
-    AuthorDeleteView, AuthorUpdateView
+
+from contest.views.generic_views import (
+    AlbumIndexView,
+    AlbumCreateView,
+    AlbumUpdateView,
+    AlbumDeleteView
+)
+from contest.views.standard_views import (
+    CommonIndexView,
+    PanelIndexView,
+    AuthorIndexView,
+    AuthorCreateView,
+    AuthorDeleteView,
+    AuthorUpdateView
+)
+
+album_patterns = ([
+    path('', AlbumIndexView.as_view(), name="index"),
+    path('create/', AlbumCreateView.as_view(), name="create"),
+    path('<int:pk>/edit/', AlbumUpdateView.as_view(), name="edit"),
+    path('<int:pk>/delete/', AlbumDeleteView.as_view(), name="delete"),
+], 'albums')
 
 author_patterns = ([
     path('', AuthorIndexView.as_view(), name="index"),
@@ -27,9 +47,9 @@ author_patterns = ([
 
 panel_patterns = ([
     path('', PanelIndexView.as_view(), name='index'),
-    path('authors/', include(author_patterns))],
-    'panel')
-
+    path('authors/', include(author_patterns)),
+    path('albums/', include(album_patterns))
+],  'panel')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

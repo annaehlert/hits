@@ -1,0 +1,17 @@
+{% extends 'panel.html' %}
+
+{% block title %}Usuń album{% endblock %}
+{% block content %}
+<div class="jumbotron py-2 px-4">
+    <h1 class="display-4">Usuń album</h1>
+    <hr class="my-4">
+    <a class="btn btn-info" href="{% url 'panel:albums:index' %}" role="button">Wróć do spisu</a>
+</div>
+<div>
+    <form method="POST" action="{% url 'panel:albums:delete' pk=object.id %}" class="form">
+        {% csrf_token %}
+        Czy na pewno chcesz usunąć {{ object }}?
+    <button type="submit" class="btn btn-danger">Usuń</button>
+    </form>
+</div>
+{% endblock %}
