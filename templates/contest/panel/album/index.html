@@ -9,7 +9,11 @@
     <hr class="my-4">
     <p>
         <span class="d-block mb-2">Aby dodać nowy album kliknij w przycisk poniżej:</span>
+        {% if perms.contest.add_album %}
         <a class="btn btn-success" href="{% url 'panel:albums:create' %}" role="button">Dodaj album</a>
+            {% else %}
+            <a href="#" class="btn btn-disabled">Dodaj album</a>
+        {% endif %}
     </p>
 </div>
 <div class="table-responsive">
@@ -36,8 +40,16 @@
                 <td>
                     <div class="btn-group">
                         <a href ="{% url 'panel:albums:songs-index' album_id=album.id %}" class="btn btn-dark btn-sm">Spis utworów</a>
+                        {% if perms.contest.change_album %}
                         <a href="{% url 'panel:albums:edit' pk=album.id %}" class="btn btn-info btn-sm">Edytuj</a>
+                        {% else %}
+                        <a href="#" class="btn btn-disabled">Edytuj</a>
+                        {% endif %}
+                    {% if perms.contest.change_album and perms.contest.delete_album %}
                         <a href="{% url 'panel:albums:delete' pk=album.id %}" class="btn btn-danger btn-sm">Usuń</a>
+                   {% else %}
+                        <a href="#" class="btn btn-disabled">Usuń</a>
+                    {% endif %}
                     </div>
                 </td>
             </tr>

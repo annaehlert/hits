@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from telnetlib import LOGOUT
+
 from django.contrib import admin
 from django.urls import path, include
 
@@ -28,7 +30,7 @@ from contest.views.standard_views import (
     AuthorIndexView,
     AuthorCreateView,
     AuthorDeleteView,
-    AuthorUpdateView, SongIndexView, SongCreateView, SongEditView, SongDeleteView
+    AuthorUpdateView, SongIndexView, SongCreateView, SongEditView, SongDeleteView, LoginView, logout_view
 )
 
 album_patterns = ([
@@ -59,4 +61,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', CommonIndexView.as_view(), name='common-index'),
     path('panel/', include(panel_patterns)),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', logout_view, name='logout')
 ]

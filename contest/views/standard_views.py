@@ -1,10 +1,50 @@
+from django.contrib import messages
+from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
-from contest.forms.standard_forms import AuthorForm
+from contest.forms.standard_forms import AuthorForm, LoginForm
 from contest.models import Author, Song, Album
 from contest.forms.model_forms import SongForm
+
+
+class LoginView(View):
+    def get(self, request):
+        if request.user.id is not None:
+            return redirect('panel:index')
+
+        return render(
+            request,
+            "contest/auth/login.html",
+        {"form": LoginForm()}
+        )
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if not form.is_valid():
+            return render(
+                request,
+                "contest/auth/login.html",
+                {"form": form}
+            )
+        user = authenticate(
+            request=request,
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password']
+        )
+        if user is None:
+            messages.add_message(request, messages.WARNING, 'User does not exist')
+            return redirect('login')
+        login(request, user)
+        messages.add_message(request,messages.SUCCESS, 'User logged in successfully')#wytworzenie pliku sesji i cookies
+        return redirect('panel:index')
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('common-index')
 
 
 class CommonIndexView(View):
@@ -19,14 +59,14 @@ class PanelIndexView(LoginRequiredMixin, View):
         return render(request, "contest/panel/index.html")
 
 
-class AuthorIndexView(View):
+class AuthorIndexView(LoginRequiredMixin, View):
     def get(self, request):
         authors = Author.objects.all().order_by('band_name')
         return render(request, "contest/panel/author/index.html", {
             "authors": authors
         })
 
-class AuthorCreateView(View):
+class AuthorCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request,
@@ -55,14 +95,14 @@ class AuthorCreateView(View):
             #         "to_be_add_2": to_be_add_2
             #     })
 
-class AuthorDeleteView(View):
+class AuthorDeleteView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         author = Author.objects.get(id=id)
         author.delete()
         return redirect('panel:authors:index')
 
-class AuthorUpdateView(View):
+class AuthorUpdateView(LoginRequiredMixin, View):
     def get(self, request, id):
         author = Author.objects.get(id=id)
         form = AuthorForm({
@@ -95,7 +135,7 @@ class AuthorUpdateView(View):
         return redirect('panel:authors:index')
 
 
-class SongIndexView(View):
+class SongIndexView(LoginRequiredMixin, View):
     def get(self, request, album_id):
         songs = Song.objects.filter(album_id=album_id)
         album = Album.objects.get(id=album_id)
@@ -104,7 +144,7 @@ class SongIndexView(View):
             "album": album
         })
 
-class SongCreateView(View):
+class SongCreateView(LoginRequiredMixin, View):
     def get(self, request, album_id):
         form = SongForm()
         album = Album.objects.get(id=album_id)
@@ -126,7 +166,7 @@ class SongCreateView(View):
         new_song.save()
         return redirect('panel:albums:songs-index', album_id=album_id)
 
-class SongEditView(View):
+class SongEditView(LoginRequiredMixin, View):
     def get(self, request, album_id, song_id):
         song = Song.objects.get(id=song_id)
         album = Album.objects.get(id=album_id)
@@ -152,9 +192,12 @@ class SongEditView(View):
         return redirect('panel:albums:songs-index', album_id=album_id)
 
 
-class SongDeleteView(View):
+class SongDeleteView(LoginRequiredMixin, View):
     def get(self, request, album_id, song_id):
         song = Song.objects.get(id=song_id)
         if song:
             song.delete()
         return redirect('panel:albums:songs-index', album_id=album_id)
+
+
+
