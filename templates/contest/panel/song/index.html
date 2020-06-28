@@ -1,0 +1,52 @@
+{% extends 'panel.html' %}
+
+{% block title %}Lista piosenek z albumu {{ album.album_name }}{% endblock %}
+
+{% block content %}
+<div class="jumbotron py-2 px-4">
+    <h1 class="display-4">Lista utworów</h1>
+    <p class="lead">Poniżej znajduje się lista utworów danego wykonawcy dostępnych w aplikacji konkursowej.</p>
+    <hr class="my-4">
+    <p>
+        <span class="d-block mb-2">Aby dodać nowy utwór kliknij w przycisk poniżej:</span>
+        <a class="btn btn-success" href="{% url 'panel:albums:songs-create' album_id=album.id %}" role="button">Dodaj utwór</a>
+    </p>
+</div>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+        <colgroup>
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1" style="width: 15%;">
+            </colgroup>
+        <thead class="thead-dark">
+            <tr>
+                <th>Tytuł</th>
+                <th>Rok wydania</th>
+                <th>Link do YT</th>
+                <th>Kolejność na liście</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for song in songs %}
+            <tr>
+                <td>{{ song.song_name }}</td>
+                <td>{{ song.year }}</td>
+                <td>{{ song.yt_link }}</td>
+                <td>{{ song.sort_order }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{% url 'panel:albums:songs-edit' album_id=album.id song_id=song.id %}" class="btn btn-info btn-sm">Edytuj</a>
+                        <a href="{% url 'panel:albums:songs-delete' album_id=album.id song_id=song.id %}" class="btn btn-danger btn-sm">Usuń</a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -31,7 +34,7 @@ class Album(models.Model):
     album_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.album_name
+        return f"{self.album_name} {self.author.band_name}"
 
 
 class Song(models.Model):
@@ -40,6 +43,13 @@ class Song(models.Model):
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album")
     yt_link = models.CharField(max_length=255, null=True)
     sort_order = models.IntegerField(default=0)
+
+
+    def clean(self):
+        if int(self.year) < 1900 or int(self.year) > datetime.now().year:
+            raise ValidationError('Year is not valid, it should be between 1900 - current year')
+        if self.yt_link != '#' and not self.yt_link.startswith('http://www.youtube.com'):
+            raise ValidationError('link is not correct')
 
     def __str__(self):
         return "{} ({})".format(self.song_name, self.album.album_name)

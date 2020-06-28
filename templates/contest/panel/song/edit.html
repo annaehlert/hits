@@ -1,0 +1,18 @@
+{% extends 'panel.html' %}
+
+{% block title %}Lista piosenek{% endblock %}
+{% block content %}
+<div class="jumbotron py-2 px-4">
+    <h1 class="display-4">Edytuj piosenkę</h1>
+    <hr class="my-4">
+    <a class="btn btn-info" href="{% url 'panel:albums:songs-index' album_id=album.id %}" role="button">Wróć do spisu</a>
+</div>
+<div>
+    <form method="POST" action="{% url 'panel:albums:songs-edit' album_id=album.id song_id=song.id %}" class="form">
+        {% csrf_token %}
+        {{ form }}
+    <button type="submit" class="btn btn-success">Zmodyfikuj dane</button>
+    </form>
+</div>
+{% endblock %}
+

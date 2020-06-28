@@ -28,7 +28,7 @@ from contest.views.standard_views import (
     AuthorIndexView,
     AuthorCreateView,
     AuthorDeleteView,
-    AuthorUpdateView
+    AuthorUpdateView, SongIndexView, SongCreateView, SongEditView, SongDeleteView
 )
 
 album_patterns = ([
@@ -36,6 +36,10 @@ album_patterns = ([
     path('create/', AlbumCreateView.as_view(), name="create"),
     path('<int:pk>/edit/', AlbumUpdateView.as_view(), name="edit"),
     path('<int:pk>/delete/', AlbumDeleteView.as_view(), name="delete"),
+    path('<int:album_id>/songs/', SongIndexView.as_view(), name="songs-index"),
+    path('<int:album_id>/songs/create', SongCreateView.as_view(), name="songs-create"),
+    path('<int:album_id>/songs/<int:song_id>/edit', SongEditView.as_view(), name="songs-edit"),
+    path('<int:album_id>/songs/<int:song_id>/delete', SongDeleteView.as_view(), name="songs-delete"),
 ], 'albums')
 
 author_patterns = ([

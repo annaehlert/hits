@@ -20,55 +20,28 @@ Zagłosuj na radiowe przeboje wszechczasów!
 {% block content %}
 
 {# Tutaj będzie formularz z możliwością wzięcia udziału w konkursie, widoczny po włączeniu opcji w JQuery #}
+<div id="vote-choice" class="d-none">
 
+</div>
 
-{# Tutaj będzie dynamiczne listowanie utworów! #}
 <div class="row">
+    {% for song in songs %}
     <div class="col-6 mb-4">
         <div class="card flex-row flex-wrap">
             <div class="card-header border-0">
                 <img src="https://via.placeholder.com/100.png" alt="Album image">
             </div>
             <div class="card-block px-2">
-                <h5 class="">Title</h5>
-                <p class="card-text">Album, Author</p>
+                <h5 class="">{{ song.song_name }}</h5>
+                <p class="card-text">{{ song.album }}</p>
             </div>
             <div class="w-100"></div>
             <div class="card-footer w-100 text-muted">
-                <a href="#" class="btn btn-primary btn-sm btn-block">Zagłosuj</a>
+                <a href="#" data-id="{{ song.id }}" class="btn btn-primary btn-sm btn-block vote">Zagłosuj</a>
             </div>
         </div>
     </div>
-    <div class="col-6 mb-4">
-        <div class="card flex-row flex-wrap">
-            <div class="card-header border-0">
-                <img src="https://via.placeholder.com/100.png" alt="Album image">
-            </div>
-            <div class="card-block px-2">
-                <h5 class="">Title</h5>
-                <p class="card-text">Album, Author</p>
-            </div>
-            <div class="w-100"></div>
-            <div class="card-footer w-100 text-muted">
-                <a href="#" class="btn btn-primary btn-sm btn-block">Zagłosuj</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 mb-4">
-        <div class="card flex-row flex-wrap">
-            <div class="card-header border-0">
-                <img src="https://via.placeholder.com/100.png" alt="Album image">
-            </div>
-            <div class="card-block px-2">
-                <h5 class="">Title</h5>
-                <p class="card-text">Album, Author</p>
-            </div>
-            <div class="w-100"></div>
-            <div class="card-footer w-100 text-muted">
-                <a href="#" class="btn btn-primary btn-sm btn-block">Zagłosuj</a>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 
 {% endblock %}
