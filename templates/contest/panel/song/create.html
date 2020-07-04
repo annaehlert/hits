@@ -1,4 +1,6 @@
 {% extends 'panel.html' %}
+{% load crispy_forms_tags %}
+
 
 {% block title %}Dodaj utwór do alubum {{ album.album_name }}{% endblock %}
 {% block content %}
@@ -10,7 +12,7 @@
 <div>
     <form method="POST" action="{% url 'panel:albums:songs-create' album_id=album.id %}" class="form">
         {% csrf_token %}
-        {{ form }}
+        {{ form|crispy }}
     <button type="submit" class="btn btn-success">Zapisz dane</button>
     </form>
 </div>

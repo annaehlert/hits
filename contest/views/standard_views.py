@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
-from contest.forms.standard_forms import AuthorForm, LoginForm
+from contest.forms.standard_forms import AuthorForm, LoginForm, VoteForm, ContestSubmissionForm
 from contest.models import Author, Song, Album
 from contest.forms.model_forms import SongForm
 
@@ -50,7 +50,9 @@ def logout_view(request):
 class CommonIndexView(View):
     def get(self, request):
         return render(request, "contest/common/index.html",
-                      {"songs": Song.objects.all().order_by('sort_order')}
+                      {"songs": Song.objects.all().order_by('sort_order'),
+                       "vote_form": VoteForm(),
+                       "contest_form": ContestSubmissionForm()}
                       )
 
 
@@ -102,15 +104,22 @@ class AuthorDeleteView(LoginRequiredMixin, View):
         author.delete()
         return redirect('panel:authors:index')
 
+
 class AuthorUpdateView(LoginRequiredMixin, View):
     def get(self, request, id):
         author = Author.objects.get(id=id)
+        birth_date = None
+        debut = None
+        if author.birth_date is not None:
+            birth_date = author.birth_date.strftime('%d/%m/%Y')
+        if author.debut is not None:
+            debut = author.debut.strftime('%d/%m/%Y')
         form = AuthorForm({
             "first_name": author.first_name,
             "last_name": author.last_name,
             "band_name": author.band_name,
-            "birth_date": author.birth_date,
-            "debut": author.debut
+            "birth_date": birth_date,
+            "debut": debut
         })
         return render(request, "contest/panel/author/edit.html", {
             "form": form,
@@ -144,6 +153,7 @@ class SongIndexView(LoginRequiredMixin, View):
             "album": album
         })
 
+
 class SongCreateView(LoginRequiredMixin, View):
     def get(self, request, album_id):
         form = SongForm()
@@ -165,6 +175,7 @@ class SongCreateView(LoginRequiredMixin, View):
         new_song.album_id = album_id
         new_song.save()
         return redirect('panel:albums:songs-index', album_id=album_id)
+
 
 class SongEditView(LoginRequiredMixin, View):
     def get(self, request, album_id, song_id):
@@ -198,6 +209,7 @@ class SongDeleteView(LoginRequiredMixin, View):
         if song:
             song.delete()
         return redirect('panel:albums:songs-index', album_id=album_id)
+
 
 
 

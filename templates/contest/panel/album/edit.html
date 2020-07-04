@@ -1,4 +1,6 @@
 {% extends 'panel.html' %}
+{% load crispy_forms_tags %}
+
 
 {% block title %}Edytuj albumy{% endblock %}
 {% block content %}
@@ -10,7 +12,7 @@
 <div>
     <form method="POST" action="{% url 'panel:albums:edit' pk=object.id %}" class="form">
         {% csrf_token %}
-        {{ form }}
+        {{ form|crispy }}
     <button type="submit" class="btn btn-success">Zmodyfikuj dane</button>
     </form>
 </div>
