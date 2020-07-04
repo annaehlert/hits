@@ -1,13 +1,16 @@
+import hashlib
+
+from django.shortcuts import render, redirect
+from django.views import View
 from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
-from django.views import View
 
+from contest.models import Author, Song, Album, ContestSubmission, SongVotes
 from contest.forms.standard_forms import AuthorForm, LoginForm, VoteForm, ContestSubmissionForm
-from contest.models import Author, Song, Album
 from contest.forms.model_forms import SongForm
+
 
 
 class LoginView(View):
@@ -54,6 +57,62 @@ class CommonIndexView(View):
                        "vote_form": VoteForm(),
                        "contest_form": ContestSubmissionForm()}
                       )
+
+
+class VoteView(View):
+    def post(self, request):
+        form = VoteForm(request.POST)
+        if not form.is_valid():
+            messages.add_message(
+                request,
+                messages.WARNING,
+                'Coś poszło nie tak.'
+            )
+            return redirect('common-index')
+        song = Song.objects.get(id=form.cleaned_data['song_data'])
+        if not song:
+            messages.add_message(
+                request,
+                messages.WARNING,
+                'Nie ma takiej piosenki.'
+            )
+            return redirect('common-index')
+        SongVotes.objects.create(
+            song=song,
+            vote_hash=hashlib.md5(
+                request.headers.get('User-Agent').encode()
+            ).hexdigest()
+        )
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            'Dziękujemy za udział w konkursie.'
+        )
+        return redirect('common-index')
+
+
+class ContestSubmissionView(View):
+    def post(self, request):
+        form = ContestSubmissionForm(request.POST)
+        if not form.is_valid():
+            messages.add_message(request, messages.WARNING, 'Coś poszło nie tak')
+            return redirect('common-index')
+
+        song = Song.objects.get(id=form.cleaned_data['song_data'])
+        if not song:
+            messages.add_message(request, messages.WARNING, 'Nie ma takiej piosenki')
+            return redirect('common-index')
+        ContestSubmission.objects.create(
+            song = song,
+            first_name =form.cleaned_data['first_name'],
+            last_name=form.cleaned_data['last_name'],
+            telephone=form.cleaned_data['telephone'],
+            email=form.cleaned_data['email'],
+            context=form.cleaned_data['context']
+        )
+        messages.add_message(request, messages.SUCCESS, 'Dziękujemy za udział w konkursie')
+        return redirect('common-index')
+
 
 
 class PanelIndexView(LoginRequiredMixin, View):

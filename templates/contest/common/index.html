@@ -32,7 +32,7 @@ Zagłosuj na radiowe przeboje wszechczasów!
             <div class="btn-group btn-block">
                 <button id="show-contest-form" class="btn btn-dark">Tak, chcę wygrać</button>
                 <button id="close-section" class="btn btn-outline-dark">Nie, dziękuję, wyślij tylko mój głos</button>
-                <form id="song-vote-form" action="" method="POST" class="d-none">
+                <form id="song-vote-form" action="{% url 'vote' %}" method="POST" class="d-none">
                     {% csrf_token %}
                     {{ vote_form }}
                 </form>
@@ -45,7 +45,7 @@ Zagłosuj na radiowe przeboje wszechczasów!
     <div class="card">
         <div class="card-body">
             <h4>Formularz konkursowy</h4>
-            <form action="" class="form" method="post">
+            <form action="{% url 'submission' %}" class="form" method="post">
                 {% csrf_token %}
                 {{ contest_form|crispy }}
 

@@ -30,7 +30,8 @@ from contest.views.standard_views import (
     AuthorIndexView,
     AuthorCreateView,
     AuthorDeleteView,
-    AuthorUpdateView, SongIndexView, SongCreateView, SongEditView, SongDeleteView, LoginView, logout_view
+    AuthorUpdateView, SongIndexView, SongCreateView, SongEditView, SongDeleteView, LoginView, logout_view, VoteView,
+    ContestSubmissionView
 )
 
 album_patterns = ([
@@ -62,5 +63,7 @@ urlpatterns = [
     path('', CommonIndexView.as_view(), name='common-index'),
     path('panel/', include(panel_patterns)),
     path('login/', LoginView.as_view(), name='login'),
-    path('logout/', logout_view, name='logout')
+    path('logout/', logout_view, name='logout'),
+    path('vote/', VoteView.as_view(), name='vote'),
+    path('submission/', ContestSubmissionView.as_view(), name='submission')
 ]
